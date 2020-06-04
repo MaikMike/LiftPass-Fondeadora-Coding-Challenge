@@ -16,3 +16,17 @@ This application solves the problem of calculating the pricing for ski lift pass
 ## Challenge
 
 The code is difficult to unit test or extend due to bad design. The business logic is tied to the framework and SQL.
+
+## Running
+
+### Server
+
+```
+FLASK_APP=src/app.py flask run
+```
+
+### Tests
+
+```shell
+pytest test_app.py
+```
