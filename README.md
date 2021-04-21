@@ -19,10 +19,30 @@ The code is difficult to unit test or extend due to bad design. The business log
 
 ## Running
 
-### Server
+### Setup database
 
 ```
-FLASK_APP=src/app.py flask run
+touch test.db && pipenv run python setup
+```
+
+### Server
+
+Install dependencies
+
+```
+pipenv install
+```
+
+Set variables
+
+```
+export FLASK_APP=src/app.py
+```
+
+Run project
+
+```
+flask run
 ```
 
 ### Tests
