@@ -43,40 +43,40 @@ def prices(query: GetPricesParam):
 
     if query.age < 6:
         return jsonify({'cost': 0})
-    else:
-        if query.type != 'Night':
-            holidays = Holiday.query.all()
 
-            is_holiday = False
-            reduction = 0
+    if query.type != 'Night':
+        holidays = Holiday.query.all()
 
-            for holiday in holidays:
-                if query.date:
-                    date = query.date
-                    if date == holiday.date:
-                        is_holiday = True
+        is_holiday = False
+        reduction = 0
 
-            if not is_holiday and query.date.weekday() == 0:
-                reduction = 35
+        for holiday in holidays:
+            if query.date:
+                date = query.date
+                if date == holiday.date:
+                    is_holiday = True
 
-            if query.age < 15:
-                return jsonify({'cost': math.ceil(price.cost * 0.7)})
+        if not is_holiday and query.date.weekday() == 0:
+            reduction = 35
+
+        if query.age < 15:
+            return jsonify({'cost': math.ceil(price.cost * 0.7)})
+        else:
+            if not query.age:
+                cost = price.cost * (1 - reduction / 100)
+                return jsonify({'cost': math.ceil(cost)})
             else:
-                if not query.age:
-                    cost = price.cost * (1 - reduction / 100)
+                if query.age > 64:
+                    cost = price.cost * 0.75 * (1 - reduction / 100)
                     return jsonify({'cost': math.ceil(cost)})
                 else:
-                    if query.age > 64:
-                        cost = price.cost * 0.75 * (1 - reduction / 100)
-                        return jsonify({'cost': math.ceil(cost)})
-                    else:
-                        cost = price.cost * (1 - reduction / 100)
-                        return jsonify({'cost': math.ceil(cost)})
-        else:
-            if query.age >= 6:
-                if query.age > 64:
-                    return jsonify({'cost': math.ceil(price.cost * 0.4)})
-                else:
-                    return jsonify({'cost': price.cost})
+                    cost = price.cost * (1 - reduction / 100)
+                    return jsonify({'cost': math.ceil(cost)})
+    else:
+        if query.age >= 6:
+            if query.age > 64:
+                return jsonify({'cost': math.ceil(price.cost * 0.4)})
             else:
-                return jsonify({'cost': 0})
+                return jsonify({'cost': price.cost})
+        else:
+            return jsonify({'cost': 0})

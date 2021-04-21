@@ -36,6 +36,7 @@ pipenv install
 Set variables
 
 ```
+pipenv shell
 export FLASK_APP=src/app.py
 ```
 
