@@ -1,11 +1,14 @@
 import math
-from datetime import datetime
+from datetime import datetime, date
+from pydantic import BaseModel, Field
 
 from flask import Flask, jsonify, request
+from flask_pydantic import validate
 from flask_sqlalchemy import SQLAlchemy
 
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
 
@@ -27,46 +30,51 @@ class Holiday(db.Model):
         return '<Holiday %s: %s>' % (self.name, self.date)
 
 
-@app.route('/prices')
-def prices():
-    price = Price.query.filter_by(type=request.args.get('type')).first()
+class GetPricesParam(BaseModel):
+    age: int
+    type: str
+    date: date
 
-    if int(request.args.get('age')) < 6:
+
+@app.route('/prices')
+@validate()
+def prices(query: GetPricesParam):
+    price = Price.query.filter_by(type=query.type).first()
+
+    if query.age < 6:
         return jsonify({'cost': 0})
     else:
-        if request.args.get('type') != 'Night':
+        if query.type != 'Night':
             holidays = Holiday.query.all()
 
             is_holiday = False
             reduction = 0
 
             for holiday in holidays:
-                if request.args.get('date'):
-                    date = datetime.strptime(
-                        request.args.get('date'), '%Y-%m-%d').date()
+                if query.date:
+                    date = query.date
                     if date == holiday.date:
                         is_holiday = True
 
-            if not is_holiday and datetime.strptime(request.args.get('date'), '%Y-%m-%d').weekday() == 0:
+            if not is_holiday and query.date.weekday() == 0:
                 reduction = 35
 
-            if int(request.args.get('age')) < 15:
+            if query.age < 15:
                 return jsonify({'cost': math.ceil(price.cost * 0.7)})
             else:
-                if not request.args.get('age'):
+                if not query.age:
                     cost = price.cost * (1 - reduction / 100)
                     return jsonify({'cost': math.ceil(cost)})
                 else:
-                    if int(request.args.get('age')) > 64:
+                    if query.age > 64:
                         cost = price.cost * 0.75 * (1 - reduction / 100)
                         return jsonify({'cost': math.ceil(cost)})
                     else:
                         cost = price.cost * (1 - reduction / 100)
                         return jsonify({'cost': math.ceil(cost)})
         else:
-            if int(request.args.get('age')) >= 6:
-                if int(request.args.get('age')) > 64:
-                    print(price.cost)
+            if query.age >= 6:
+                if query.age > 64:
                     return jsonify({'cost': math.ceil(price.cost * 0.4)})
                 else:
                     return jsonify({'cost': price.cost})

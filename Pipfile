@@ -11,6 +11,9 @@ flask = "*"
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
 pytest = "*"
+pydantic = "*"
+flask-pydantic = "*"
+datetime = "*"
 
 [requires]
 python_version = "3.7"
