@@ -81,12 +81,12 @@ def is_holiday(lift_date: date):
     return is_holiday
 
 
-def is_monday(lift_date):
+def is_monday(lift_date: date):
     MONDAY_ISO_DAY: int = 0
     return lift_date.weekday() == MONDAY_ISO_DAY
 
 
 def compute_reduction(lift_date: date):
-    if not is_holiday(query.date) and is_monday(query.date):
+    if not is_holiday(lift_date) and is_monday(lift_date):
         return 35
     return 0
