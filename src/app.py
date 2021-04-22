@@ -41,30 +41,38 @@ class GetPricesParam(BaseModel):
 def prices(query: GetPricesParam):
     price = Price.query.filter_by(type=query.type).first()
 
-    if query.age < 6:
+    if is_child(query.age):
         return jsonify({'cost': 0})
 
     if query.type == 'Jour':
         reduction = compute_reduction(query.date)
 
-        if query.age < 15:
+        if is_under_15(query.age):
             return jsonify({'cost': math.ceil(price.cost * 0.7)})
 
-        if not query.age:
-            cost = price.cost * (1 - reduction / 100)
-            return jsonify({'cost': math.ceil(cost)})
-
-        if query.age > 64:
+        if is_older(query.age):
             cost = price.cost * 0.75 * (1 - reduction / 100)
             return jsonify({'cost': math.ceil(cost)})
 
         return jsonify({'cost': math.ceil(price.cost * (1 - reduction / 100))})
 
     # IS DAY
-    if query.age > 64:
+    if is_older(query.age):
         return jsonify({'cost': math.ceil(price.cost * 0.4)})
 
     return jsonify({'cost': price.cost})
+
+
+def is_child(age: int):
+    return age < 6
+
+
+def is_older(age: int):
+    return age > 64
+
+
+def is_under_15(age: int):
+    return age < 15
 
 
 def is_holiday(lift_date: date):
