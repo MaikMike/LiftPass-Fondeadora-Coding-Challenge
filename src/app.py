@@ -44,17 +44,10 @@ def prices(query: GetPricesParam):
     if query.age < 6:
         return jsonify({'cost': 0})
 
-    if query.type != 'Night':
-        holidays = Holiday.query.all()
-
-        is_holiday = False
+    if query.type == 'Jour':
         reduction = 0
 
-        for holiday in holidays:
-            if query.date and query.date == holiday.date:
-                is_holiday = True
-
-        if not is_holiday and query.date.weekday() == 0:
+        if not is_holiday(query.date) and is_monday(query.date):
             reduction = 35
 
         if query.age < 15:
@@ -75,3 +68,25 @@ def prices(query: GetPricesParam):
         return jsonify({'cost': math.ceil(price.cost * 0.4)})
 
     return jsonify({'cost': price.cost})
+
+
+def is_holiday(lift_date: date):
+    holidays = Holiday.query.all()
+    is_holiday = False
+
+    for holiday in holidays:
+        if lift_date and lift_date == holiday.date:
+            is_holiday = True
+
+    return is_holiday
+
+
+def is_monday(lift_date):
+    MONDAY_ISO_DAY: int = 0
+    return lift_date.weekday() == MONDAY_ISO_DAY
+
+
+def compute_reduction(lift_date: date):
+    if not is_holiday(query.date) and is_monday(query.date):
+        return 35
+    return 0
