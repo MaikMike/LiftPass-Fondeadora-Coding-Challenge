@@ -51,32 +51,27 @@ def prices(query: GetPricesParam):
         reduction = 0
 
         for holiday in holidays:
-            if query.date:
-                date = query.date
-                if date == holiday.date:
-                    is_holiday = True
+            if query.date and query.date == holiday.date:
+                is_holiday = True
 
         if not is_holiday and query.date.weekday() == 0:
             reduction = 35
 
         if query.age < 15:
             return jsonify({'cost': math.ceil(price.cost * 0.7)})
-        else:
-            if not query.age:
-                cost = price.cost * (1 - reduction / 100)
-                return jsonify({'cost': math.ceil(cost)})
-            else:
-                if query.age > 64:
-                    cost = price.cost * 0.75 * (1 - reduction / 100)
-                    return jsonify({'cost': math.ceil(cost)})
-                else:
-                    cost = price.cost * (1 - reduction / 100)
-                    return jsonify({'cost': math.ceil(cost)})
-    else:
-        if query.age >= 6:
-            if query.age > 64:
-                return jsonify({'cost': math.ceil(price.cost * 0.4)})
-            else:
-                return jsonify({'cost': price.cost})
-        else:
-            return jsonify({'cost': 0})
+
+        if not query.age:
+            cost = price.cost * (1 - reduction / 100)
+            return jsonify({'cost': math.ceil(cost)})
+
+        if query.age > 64:
+            cost = price.cost * 0.75 * (1 - reduction / 100)
+            return jsonify({'cost': math.ceil(cost)})
+
+        return jsonify({'cost': math.ceil(price.cost * (1 - reduction / 100))})
+
+    # IS DAY
+    if query.age > 64:
+        return jsonify({'cost': math.ceil(price.cost * 0.4)})
+
+    return jsonify({'cost': price.cost})
