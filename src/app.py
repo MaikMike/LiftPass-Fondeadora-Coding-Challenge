@@ -45,10 +45,7 @@ def prices(query: GetPricesParam):
         return jsonify({'cost': 0})
 
     if query.type == 'Jour':
-        reduction = 0
-
-        if not is_holiday(query.date) and is_monday(query.date):
-            reduction = 35
+        reduction = compute_reduction(query.date)
 
         if query.age < 15:
             return jsonify({'cost': math.ceil(price.cost * 0.7)})
