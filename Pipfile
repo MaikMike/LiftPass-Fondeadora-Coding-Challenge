@@ -14,6 +14,7 @@ pytest = "*"
 pydantic = "*"
 flask-pydantic = "*"
 datetime = "*"
+flask-restful = "*"
 
 [requires]
 python_version = "3.7"
