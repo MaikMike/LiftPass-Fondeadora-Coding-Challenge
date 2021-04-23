@@ -1,0 +1,6 @@
+{
+    "python.linting.pylintEnabled": false,
+    "python.linting.pep8Enabled": false,
+    "python.pythonPath": "/workspace/virtualenvs/abr/bin/python3",
+    "python.linting.enabled": false
+}
