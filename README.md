@@ -22,7 +22,8 @@ The code is difficult to unit test or extend due to bad design. The business log
 ### Setup database
 
 ```
-touch test.db && pipenv run python setup
+touch test.db
+pipenv run python setup
 ```
 
 ### Server
@@ -49,5 +50,7 @@ flask run
 ### Tests
 
 ```shell
-pytest test_app.py
+pytest src/test/test_day_pass_prices_calculator.py
+pytest src/test/test_night_pass_prices_calculator.py
+
 ```

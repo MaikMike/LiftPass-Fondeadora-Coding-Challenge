@@ -5,6 +5,9 @@ from api.use_case.price_discount_calculator import PriceDiscountCalculator
 
 class NightPassPriceCalculator:
 
+    NO_TARIFF = 0
+    ELDERLY_DISCOUNT = 40
+
     def __init__(self, price_repo):
         self.price_repo = price_repo
 
@@ -13,8 +16,8 @@ class NightPassPriceCalculator:
         priceCalculator = PriceDiscountCalculator()
 
         if age.is_child():
-            return priceCalculator.execute(price.cost, [0])
+            return priceCalculator.execute(price.cost, [self.NO_TARIFF])
         if age.is_elderly():
-            return priceCalculator.execute(price.cost, [40])
+            return priceCalculator.execute(price.cost, [self.ELDERLY_DISCOUNT])
 
         return price.cost
